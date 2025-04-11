@@ -1,98 +1,161 @@
-Whisper ASR Fine-Tuning
-This repository contains code for fine-tuning the Whisper model on the ATCO2-ASR dataset using the Hugging Face Transformers library. The goal is to train a speech-to-text model for transcription tasks.
+# Whisper ASR Fine-Tuning Project
 
-Requirements
-To run the scripts, ensure you have the following Python packages installed:
+This repository contains code for fine-tuning the Whisper model on the ATCO2-ASR dataset using the Hugging Face Transformers library. The goal of this project is to train a speech-to-text (ASR) model for transcribing audio into text, specifically for the ATCO2-ASR dataset.
+
+## Table of Contents
+1. [Project Structure](#project-structure)
+2. [Requirements](#requirements)
+3. [How to Run the Scripts](#how-to-run-the-scripts)
+    - [Step 1: Data Preprocessing](#step-1-data-preprocessing)
+    - [Step 2: Model Training](#step-2-model-training)
+    - [Step 3: Model Evaluation](#step-3-model-evaluation)
+4. [Training Configuration](#training-configuration)
+5. [Evaluation Metrics](#evaluation-metrics)
+6. [Results](#results)
+7. [License](#license)
+
+## Project Structure
+
+whisper_asr_finetuning/ │ ├── data_preprocessing.py # Script for loading and preprocessing the dataset ├── model_training.py # Script for defining and training the model ├── evaluation.py # Script for evaluating the model and computing metrics ├── requirements.txt # List of required Python packages ├── outputs/ # Directory for saving trained models and results ├── README.md # Project documentation └── utils/ # Helper scripts (optional, for extended functionality)
+
+python
+Copy
+Edit
+
+## Requirements
+
+To run the scripts, you'll need to install the required dependencies. Create a Python virtual environment and install the dependencies from the `requirements.txt` file:
+
+### Setting up the environment:
+
+1. **Create a virtual environment** (if you don't have one already):
+   ```bash
+   python -m venv whisper_env
+Activate the virtual environment:
+
+On Windows:
+
+bash
+Copy
+Edit
+.\whisper_env\Scripts\activate
+On macOS/Linux:
+
+bash
+Copy
+Edit
+source whisper_env/bin/activate
+Install the dependencies:
 
 bash
 Copy
 Edit
 pip install -r requirements.txt
-The requirements.txt includes:
+requirements.txt includes:
 
-datasets[audio]
+datasets[audio] — Hugging Face datasets library with audio support
 
-transformers
+transformers — Hugging Face Transformers library
 
-evaluate
+evaluate — For evaluation metrics
 
-jiwer
+jiwer — Word Error Rate (WER) metric computation
 
-tensorboard
+tensorboard — For logging training progress
 
-gradio
+gradio — For creating interactive demos (optional)
 
-huggingface_hub
+huggingface_hub — To interact with Hugging Face's model hub
 
-Running the Scripts
-1. Data Preprocessing (data_preprocessing.py)
-This script loads and preprocesses the ATCO2-ASR dataset, which is required for training the Whisper model.
+How to Run the Scripts
+Step 1: Data Preprocessing
+This script loads and preprocesses the ATCO2-ASR dataset, converts audio files into features, and tokenizes the text labels for training.
 
-To run the script:
+To run the preprocessing script:
 
 bash
 Copy
 Edit
 python data_preprocessing.py
-It will:
+What happens?
 
-Load the dataset from Hugging Face.
+The ATCO2-ASR dataset is loaded from Hugging Face.
 
-Convert audio to features using the WhisperFeatureExtractor.
+Audio files are converted into features using WhisperFeatureExtractor.
 
-Tokenize text and prepare the dataset for training.
+Text data is tokenized using the WhisperTokenizer.
 
-2. Model Training (model_training.py)
-This script is responsible for defining the model, setting up the training configuration, and training the model on the prepared dataset.
+The preprocessed dataset is saved to be used in the next steps.
 
-To run the script:
+Step 2: Model Training
+After preprocessing the data, you can proceed with training the model. This script loads the Whisper model, defines the training configuration, and trains the model using the Seq2SeqTrainer from Hugging Face.
+
+To run the training script:
 
 bash
 Copy
 Edit
 python model_training.py
-It will:
+What happens?
 
-Load the Whisper model and tokenizer.
+The Whisper model and tokenizer are loaded.
 
-Train the model using the Seq2SeqTrainer.
+The training process begins using the dataset prepared in Step 1.
 
-Save the trained model, tokenizer, and processor to the outputs/ directory.
+The model is trained for 10 epochs.
 
-3. Evaluation (evaluation.py)
-This script evaluates the trained model using Word Error Rate (WER) as the evaluation metric.
+Logs are generated and saved using TensorBoard.
 
-To run the script:
+The trained model is saved to the outputs/ directory.
+
+Step 3: Model Evaluation
+Once the model is trained, you can evaluate its performance using the Word Error Rate (WER) metric. This script computes WER by comparing the predicted transcriptions to the actual text labels.
+
+To run the evaluation script:
 
 bash
 Copy
 Edit
 python evaluation.py
-It will:
+What happens?
 
-Load the best model saved from training.
+The model saved from Step 2 is loaded.
 
-Compute the WER for both training and validation sets.
+The WER for both the training and validation sets is computed.
 
-4. Results
-The results of the evaluation (WER scores) are saved in a results.txt file inside the outputs/ directory.
+Results are saved to a file called results.txt in the outputs/ directory.
 
-Training and Evaluation Flow
-Step 1: Preprocess the data
+Training Configuration
+The training configuration is set in the model_training.py script. The following key parameters are defined:
 
-Run the data_preprocessing.py script first to prepare the dataset.
+epochs: Number of training epochs (default: 10)
 
-Step 2: Train the model
+batch_size: Batch size for training (default: 16)
 
-After preprocessing, run the model_training.py script to train the model.
+learning_rate: Learning rate for optimizer (default: 0.00001)
 
-Step 3: Evaluate the model
+gradient_accumulation_steps: Number of gradient accumulation steps (default: 2)
 
-Once training is complete, evaluate the model by running the evaluation.py script.
+warmup_steps: Number of warm-up steps for learning rate scheduling (default: 1000)
 
-Notes
-The model is trained for 10 epochs with a batch size of 16. You can adjust these parameters as needed in the model_training.py file.
+gradient_checkpointing: Enabled to reduce memory usage during training
 
-The training and evaluation logs will be printed to the console and saved to the outputs/ directory.
+eval_strategy: Strategy for evaluation (default: 'epoch')
 
-Ensure you have access to the Hugging Face hub by logging in using huggingface_hub.login() before running the scripts.
+save_strategy: Strategy for saving model checkpoints (default: 'epoch')
+
+Feel free to modify these parameters in the script to fit your hardware and training needs.
+
+Evaluation Metrics
+The primary evaluation metric used is Word Error Rate (WER), which is a common metric for speech-to-text models. It measures the number of word-level transcription errors.
+
+WER = (substitutions + deletions + insertions) / total words
+
+The WER results will be printed to the console and saved to the results.txt file in the outputs/ directory.
+
+Results
+After training and evaluation, the results (WER) are saved in outputs/results.txt.
+
+The trained model, tokenizer, and feature extractor are saved in the outputs/ directory as well.
+
+These can be used for inference or further fine-tuning.
