@@ -1,161 +1,123 @@
-# Whisper ASR Fine-Tuning Project
+Fine-Tuning Whisper for ASR
+This repository provides a detailed guide and code to fine-tune OpenAI’s Whisper model for Automatic Speech Recognition (ASR). The project aims to improve the model's performance for specific datasets or domains, enabling it to transcribe speech more accurately for specialized tasks.
 
-This repository contains code for fine-tuning the Whisper model on the ATCO2-ASR dataset using the Hugging Face Transformers library. The goal of this project is to train a speech-to-text (ASR) model for transcribing audio into text, specifically for the ATCO2-ASR dataset.
+Table of Contents
+Project Overview
 
-## Table of Contents
-1. [Project Structure](#project-structure)
-2. [Requirements](#requirements)
-3. [How to Run the Scripts](#how-to-run-the-scripts)
-    - [Step 1: Data Preprocessing](#step-1-data-preprocessing)
-    - [Step 2: Model Training](#step-2-model-training)
-    - [Step 3: Model Evaluation](#step-3-model-evaluation)
-4. [Training Configuration](#training-configuration)
-5. [Evaluation Metrics](#evaluation-metrics)
-6. [Results](#results)
-7. [License](#license)
+Project Structure
 
-## Project Structure
+Installation
 
-whisper_asr_finetuning/ │ ├── data_preprocessing.py # Script for loading and preprocessing the dataset ├── model_training.py # Script for defining and training the model ├── evaluation.py # Script for evaluating the model and computing metrics ├── requirements.txt # List of required Python packages ├── outputs/ # Directory for saving trained models and results ├── README.md # Project documentation └── utils/ # Helper scripts (optional, for extended functionality)
+Dependencies
 
-python
+How to Run
+
+Fine-Tuning the Model
+
+Evaluation
+
+License
+
+Acknowledgments
+
+Project Overview
+The Whisper model is a powerful deep learning-based ASR system designed by OpenAI. While Whisper is trained on a wide range of languages and accents, fine-tuning the model on specific datasets can lead to significant improvements for specialized use cases, such as domain-specific vocabulary or noisy environments.
+
+This repository provides the necessary scripts and instructions to fine-tune the Whisper model on your own dataset and evaluate its performance.
+
+Project Structure
+Here’s an overview of the project directory structure:
+
+kotlin
 Copy
 Edit
+Finetuning-Whisper-for-ASR/
+├── data/
+│   ├── train/
+│   ├── val/
+│   └── test/
+├── notebooks/
+│   └── fine_tuning_notebook.ipynb
+├── src/
+│   ├── data_processing.py
+│   ├── model.py
+│   ├── training.py
+│   └── evaluation.py
+├── outputs/
+│   └── models/
+├── README.md
+└── requirements.txt
+Directories and Files:
+data/: Contains the training, validation, and test datasets. Ensure that these are properly preprocessed for compatibility with the Whisper model.
 
-## Requirements
+notebooks/: Includes a Jupyter notebook for interactive fine-tuning.
 
-To run the scripts, you'll need to install the required dependencies. Create a Python virtual environment and install the dependencies from the `requirements.txt` file:
+src/: The main source code directory containing:
 
-### Setting up the environment:
+data_processing.py: Functions for data loading, cleaning, and preprocessing.
 
-1. **Create a virtual environment** (if you don't have one already):
-   ```bash
-   python -m venv whisper_env
-Activate the virtual environment:
+model.py: The Whisper model architecture and fine-tuning logic.
 
-On Windows:
+training.py: Code to train the fine-tuned model.
+
+evaluation.py: Scripts for evaluating the model's performance on the test set.
+
+outputs/: Stores the fine-tuned models and any logs or checkpoints during training.
+
+requirements.txt: Lists all the dependencies required to run the project.
+
+Installation
+Clone the repository:
 
 bash
 Copy
 Edit
-.\whisper_env\Scripts\activate
-On macOS/Linux:
-
-bash
-Copy
-Edit
-source whisper_env/bin/activate
-Install the dependencies:
+git clone https://github.com/Trinita21/Finetuning-Whisper-for-ASR.git
+cd Finetuning-Whisper-for-ASR
+Install the necessary dependencies:
 
 bash
 Copy
 Edit
 pip install -r requirements.txt
-requirements.txt includes:
+Dependencies
+Python 3.8+
 
-datasets[audio] — Hugging Face datasets library with audio support
+Hugging Face Transformers
 
-transformers — Hugging Face Transformers library
+PyTorch
 
-evaluate — For evaluation metrics
+Datasets library from Hugging Face
 
-jiwer — Word Error Rate (WER) metric computation
+numpy
 
-tensorboard — For logging training progress
+matplotlib
 
-gradio — For creating interactive demos (optional)
+librosa
 
-huggingface_hub — To interact with Hugging Face's model hub
+For a full list of dependencies, check the requirements.txt file.
 
-How to Run the Scripts
-Step 1: Data Preprocessing
-This script loads and preprocesses the ATCO2-ASR dataset, converts audio files into features, and tokenizes the text labels for training.
+How to Run
+Fine-Tuning the Model
+To fine-tune the Whisper model, follow the instructions below:
 
-To run the preprocessing script:
+Prepare your dataset and ensure it is in the correct format (WAV audio files and corresponding transcriptions).
 
-bash
-Copy
-Edit
-python data_preprocessing.py
-What happens?
+Modify the data_processing.py script to load your dataset and preprocess it.
 
-The ATCO2-ASR dataset is loaded from Hugging Face.
-
-Audio files are converted into features using WhisperFeatureExtractor.
-
-Text data is tokenized using the WhisperTokenizer.
-
-The preprocessed dataset is saved to be used in the next steps.
-
-Step 2: Model Training
-After preprocessing the data, you can proceed with training the model. This script loads the Whisper model, defines the training configuration, and trains the model using the Seq2SeqTrainer from Hugging Face.
-
-To run the training script:
+Run the training script:
 
 bash
 Copy
 Edit
-python model_training.py
-What happens?
+python src/training.py
+The model will save checkpoints in the outputs/models/ directory.
 
-The Whisper model and tokenizer are loaded.
-
-The training process begins using the dataset prepared in Step 1.
-
-The model is trained for 10 epochs.
-
-Logs are generated and saved using TensorBoard.
-
-The trained model is saved to the outputs/ directory.
-
-Step 3: Model Evaluation
-Once the model is trained, you can evaluate its performance using the Word Error Rate (WER) metric. This script computes WER by comparing the predicted transcriptions to the actual text labels.
-
-To run the evaluation script:
+Evaluating the Model
+To evaluate the fine-tuned model:
 
 bash
 Copy
 Edit
-python evaluation.py
-What happens?
-
-The model saved from Step 2 is loaded.
-
-The WER for both the training and validation sets is computed.
-
-Results are saved to a file called results.txt in the outputs/ directory.
-
-Training Configuration
-The training configuration is set in the model_training.py script. The following key parameters are defined:
-
-epochs: Number of training epochs (default: 10)
-
-batch_size: Batch size for training (default: 16)
-
-learning_rate: Learning rate for optimizer (default: 0.00001)
-
-gradient_accumulation_steps: Number of gradient accumulation steps (default: 2)
-
-warmup_steps: Number of warm-up steps for learning rate scheduling (default: 1000)
-
-gradient_checkpointing: Enabled to reduce memory usage during training
-
-eval_strategy: Strategy for evaluation (default: 'epoch')
-
-save_strategy: Strategy for saving model checkpoints (default: 'epoch')
-
-Feel free to modify these parameters in the script to fit your hardware and training needs.
-
-Evaluation Metrics
-The primary evaluation metric used is Word Error Rate (WER), which is a common metric for speech-to-text models. It measures the number of word-level transcription errors.
-
-WER = (substitutions + deletions + insertions) / total words
-
-The WER results will be printed to the console and saved to the results.txt file in the outputs/ directory.
-
-Results
-After training and evaluation, the results (WER) are saved in outputs/results.txt.
-
-The trained model, tokenizer, and feature extractor are saved in the outputs/ directory as well.
-
-These can be used for inference or further fine-tuning.
+python src/evaluation.py
+This will generate evaluation metrics, such as word error rate (WER), and provide insights into how well the fine-tuned model performs on your test dataset.
